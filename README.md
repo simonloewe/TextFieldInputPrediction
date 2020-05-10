@@ -15,5 +15,5 @@ for it to work:
 Note: If the TextField gets multiple inputs at once. E.g. in form of a String separated by *spaces* it will make predictions on every SubString of that input and append these predictions to the *predictedValues* Array. **Altough every prediction will only occure once in the ```predictedValues```**.
 
 ### E.g. of use
-![Example of TextFieldPrediction](Assets/TextFieldPrediction.gif)
+![Example of TextFieldPrediction](Example.gif)
 
