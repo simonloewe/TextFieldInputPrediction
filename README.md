@@ -1,4 +1,3 @@
-![Swift](https://github.com/simonloewe/TextFieldInputPrediction/workflows/Swift/badge.svg)
 # Live TextFieldInputPrediction
 
 ## Simple Swift TextField Live Input Prediction
