@@ -1,9 +1,10 @@
 # Live TextFieldInputPrediction
 
 ## Simple Swift TextField Live Input Prediction
+This is an approach to get life input predictions of a SwiftUI TextField
 
 ### How to use:
-Copy the file into your Project and use it by calling a
+Copy the file ```TextFieldPrediction.swift``` into your Project and use it by calling a
 TextFieldPrediction(...). The following parameters will be needed
 for it to work: 
 1) ```textFieldText``` -> This is the text that is currently in the TextField (This is a parameter that is also used in the Swift implementation of TextField() )
