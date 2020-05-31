@@ -1,4 +1,4 @@
-# Live TextFieldInputPrediction
+# Live TextField Input Prediction
 
 ## Simple Swift ```TextField``` Live Input Prediction
 This is an approach to get live input predictions of a SwiftUI ```TextField```
