@@ -10,8 +10,7 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State var textFieldText: String = ""
-    @State var textFieldTitle: String = "Title"
+    @State var textFieldInput: String = ""
     @State var predictableValues: Array<String> = ["First", "Second", "Third", "Fourth"]
     @State var predictedValue: Array<String> = []
     
@@ -25,10 +24,12 @@ struct ContentView: View {
                 }
             }
             
-            TextFieldPrediction(textFieldText: self.$textFieldText,
-                            textFieldTitle: self.$textFieldTitle,
-                            predictableValues: self.$predictableValues,
-                            predictedValue: self.$predictedValue)
+            PredictingTextField(predictableValues: self.$predictableValues, predictedValues: self.$predictedValue, textFieldInput: self.$textFieldInput)
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+            
+            Divider()
+            
+            PredictingTextField(predictableValues: self.$predictableValues, predictedValues: self.$predictedValue, textFieldInput: self.$textFieldInput, textFieldTitle: "With Title", predictionInterval: 2)
             .textFieldStyle(RoundedBorderTextFieldStyle())
             
             ForEach(self.predictedValue, id: \.self){ value in
@@ -38,46 +39,71 @@ struct ContentView: View {
     }
 }
 
-struct TextFieldPrediction: View {
+
+/// TextField capable of making predictions based on provided predictable values
+struct PredictingTextField: View {
     
-    @Binding var textFieldText: String
-    @Binding var textFieldTitle: String
+    /// All possible predictable values. Can be only one.
     @Binding var predictableValues: Array<String>
-    @Binding var predictedValue: Array<String>
     
-    @State var isEditing: Bool = false
+    /// This returns the values that are being predicted based on the predictable values
+    @Binding var predictedValues: Array<String>
     
-    var body: some View {
-        TextField(self.textFieldTitle, text: self.$textFieldText, onEditingChanged: { status in self.realTimePrediction(status: status)}, onCommit: { self.makePrediction()})
+    /// Current input of the user in the TextField. This is Binded as perhaps there is the urge to alter this during live time. E.g. when a predicted value was selected and the input should be cleared
+    @Binding var textFieldInput: String
+    
+    /// The time interval between predictions based on current input. Default is 0.1 second. I would not recommend setting this to low as it can be CPU heavy.
+    @State var predictionInterval: Double?
+    
+    /// Placeholder in empty TextField
+    @State var textFieldTitle: String?
+    
+    @State private var isBeingEdited: Bool = false
+    
+    init(predictableValues: Binding<Array<String>>, predictedValues: Binding<Array<String>>, textFieldInput: Binding<String>, textFieldTitle: String? = "", predictionInterval: Double? = 0.1){
+        
+        self._predictableValues = predictableValues
+        self._predictedValues = predictedValues
+        self._textFieldInput = textFieldInput
+        
+        self.textFieldTitle = textFieldTitle
+        self.predictionInterval = predictionInterval
     }
     
-    func realTimePrediction(status: Bool) {
-        self.isEditing = status
+    var body: some View {
+        TextField(self.textFieldTitle ?? "", text: self.$textFieldInput, onEditingChanged: { editing in self.realTimePrediction(status: editing)}, onCommit: { self.makePrediction()})
+    }
+    
+    /// Schedules prediction based on interval and only a if input is being made
+    private func realTimePrediction(status: Bool) {
+        self.isBeingEdited = status
         if status == true {
-            Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+            Timer.scheduledTimer(withTimeInterval: self.predictionInterval ?? 1, repeats: true) { timer in
                 self.makePrediction()
                 
-                if self.isEditing == false {
+                if self.isBeingEdited == false {
                     timer.invalidate()
                 }
             }
         }
     }
     
-    func capitalizeFirstLetter(smallString: String) -> String {
+    /// Capitalizes the first letter of a String
+    private func capitalizeFirstLetter(smallString: String) -> String {
         return smallString.prefix(1).capitalized + smallString.dropFirst()
     }
     
-    func makePrediction() {
-        self.predictedValue = []
-        if !self.textFieldText.isEmpty{
-            for item in self.predictableValues {
-                if self.textFieldText.split(separator: " ").count > 1 {
-                    self.makeMultiPrediction(item: item)
+    /// Makes prediciton based on current input
+    private func makePrediction() {
+        self.predictedValues = []
+        if !self.textFieldInput.isEmpty{
+            for value in self.predictableValues {
+                if self.textFieldInput.split(separator: " ").count > 1 {
+                    self.makeMultiPrediction(value: value)
                 }else {
-                    if item.contains(self.textFieldText) || item.contains(self.capitalizeFirstLetter(smallString: self.textFieldText)){
-                        if !self.predictedValue.contains(String(item)) {
-                            self.predictedValue.append(String(item))
+                    if value.contains(self.textFieldInput) || value.contains(self.capitalizeFirstLetter(smallString: self.textFieldInput)){
+                        if !self.predictedValues.contains(String(value)) {
+                            self.predictedValues.append(String(value))
                         }
                     }
                 }
@@ -85,11 +111,12 @@ struct TextFieldPrediction: View {
         }
     }
     
-    func makeMultiPrediction(item: String) {
-        for subString in self.textFieldText.split(separator: " ") {
-            if item.contains(String(subString)) || item.contains(self.capitalizeFirstLetter(smallString: String(subString))){
-                if !self.predictedValue.contains(item) {
-                    self.predictedValue.append(item)
+    /// Makes predictions if the input String is splittable
+    private func makeMultiPrediction(value: String) {
+        for subString in self.textFieldInput.split(separator: " ") {
+            if value.contains(String(subString)) || value.contains(self.capitalizeFirstLetter(smallString: String(subString))){
+                if !self.predictedValues.contains(value) {
+                    self.predictedValues.append(value)
                 }
             }
         }
