@@ -1,7 +1,7 @@
 # Live TextField Input Prediction
 
 ## Simple Swift ```TextField``` Live Input Prediction
-This is an approach to get live input predictions of a SwiftUI ```TextField```
+This is an approach to get live input predictions/ auto completion of a SwiftUI ```TextField```
 
 ### How to use:
 Copy the file ```PredictingTextField.swift``` into your Project and use it by calling a
