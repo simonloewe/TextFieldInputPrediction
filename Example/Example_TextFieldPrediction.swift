@@ -26,12 +26,7 @@ struct ContentView: View {
             
             PredictingTextField(predictableValues: self.$predictableValues, predictedValues: self.$predictedValue, textFieldInput: self.$textFieldInput)
             .textFieldStyle(RoundedBorderTextFieldStyle())
-            
-            Divider()
-            
-            PredictingTextField(predictableValues: self.$predictableValues, predictedValues: self.$predictedValue, textFieldInput: self.$textFieldInput, textFieldTitle: "With Title", predictionInterval: 2)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            
+                        
             ForEach(self.predictedValue, id: \.self){ value in
                 Text("Predicted Value: \(value)")
             }
