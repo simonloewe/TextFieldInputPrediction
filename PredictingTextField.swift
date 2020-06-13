@@ -24,7 +24,7 @@ struct PredictingTextField: View {
     @State var predictionInterval: Double?
     
     /// Placeholder in empty TextField
-    @State var textFieldTitle: String?
+    var textFieldTitle: String?
     
     @State private var isBeingEdited: Bool = false
     
