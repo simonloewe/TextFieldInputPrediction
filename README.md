@@ -5,7 +5,23 @@ This is an approach to get live input predictions/ auto completion of a SwiftUI 
 
 ### How to use:
 Copy the file ```PredictingTextField.swift``` into your Project and use it by calling a
-```PredictingTextField(...)```. 
+```Swift
+struct MyView: View {
+    
+    @State var predictableValues: Array<String> = []
+    @State var myPredictedValues: Array<String> = []
+    
+    /// Empty to start with. Will populate once user starts typing
+    @State var textFieldInput: String = ""
+    
+    var body: some View {
+        PredictingTextField(predictableValues: self.$predictableValues,
+                            predictedValues: self.$myPredictedValues,
+                            textFieldInput: self.$textFieldInput
+        )
+    }
+}
+```
 You can and need to pass it the following variables: 
 
 #### Mandatory
@@ -14,8 +30,8 @@ You can and need to pass it the following variables:
 3) ```textFieldInput``` -> ```@Binding String``` This is the text that is currently in the ```TextField``` (This is a parameter that is also used in the Swift implementation of ```TextField```() ). It is provided as Binding Object so it can be reset from the parent view. If e.g. one wants to reset the input of the ```TextField``` once a prediction was made/ selected/ used.
 
 #### Optinal
-4) ```textFieldTitle``` -> ```String?``` This can be modified to accelerate or slower the prediction. Default is a predicition made every 0.1 seconds.
-5) ```predictionInterval``` -> ```@State Double?``` Use this to set a Title in an untouched ```TextField```
+4) ```textFieldTitle``` -> ```String?``` Use this to set a Title in an untouched ```TextField```
+5) ```predictionInterval``` -> ```@State Double?``` This can be modified to accelerate or slower the prediction. Default is a predicition made every 0.1 seconds.
 
 Note: If the ```TextField``` gets multiple inputs at once. E.g. in form of a String separated by *spaces* it will make predictions on every SubString of that input and append these predictions to the *predictedValues* Array. **Altough every prediction will only occure once in the ```predictedValues```**.
 
